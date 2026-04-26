@@ -1,9 +1,9 @@
 {
-  "buildCommand": "vite build",
+  "buildCommand": "npx tsx script/generate-data.ts && vite build",
   "outputDirectory": "dist/public",
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

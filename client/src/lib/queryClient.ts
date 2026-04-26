@@ -1,5 +1,18 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+function apiToStaticUrl(url: string): string {
+  const [path, query] = url.split("?");
+  const lang = new URLSearchParams(query || "").get("lang") || "en";
+
+  if (path.startsWith("/api/plans/")) {
+    const slug = path.replace("/api/plans/", "").replace(":", "-");
+    return `/data/plans-${slug}-${lang}.json`;
+  }
+  if (path === "/api/guide") return `/data/guide-${lang}.json`;
+  if (path === "/api/strength-conditioning") return `/data/sc-${lang}.json`;
+  return url;
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -29,7 +42,7 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const res = await fetch(apiToStaticUrl(queryKey.join("/") as string), {
       credentials: "include",
     });
 
