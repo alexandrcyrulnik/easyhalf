@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LogOut, BookOpen, Calendar, Dumbbell } from "lucide-react";
 import type { PlanType, TrainingPlan, IntroductionContent } from "@shared/schema";
-import { getCompletedWorkouts, toggleWorkoutComplete, clearSelectedPlan, getDistanceUnit, setDistanceUnit, type DistanceUnit, type Language } from "@/lib/localStorage";
+import { getCompletedWorkouts, toggleWorkoutComplete, clearSelectedPlan, type Language } from "@/lib/localStorage";
 import TrainingPlanTable from "@/components/training-plan-table";
 import IntroductionView from "@/components/introduction-view";
 
@@ -20,18 +20,10 @@ interface DashboardProps {
 export default function Dashboard({ selectedPlan, onChangePlan, language, onToggleLanguage }: DashboardProps) {
   const [completedWorkouts, setCompletedWorkouts] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState("plan");
-  const [distanceUnit, setDistanceUnitState] = useState<DistanceUnit>("km");
 
   useEffect(() => {
     setCompletedWorkouts(getCompletedWorkouts());
-    setDistanceUnitState(getDistanceUnit());
   }, []);
-
-  const handleToggleUnit = () => {
-    const newUnit = distanceUnit === "km" ? "miles" : "km";
-    setDistanceUnit(newUnit);
-    setDistanceUnitState(newUnit);
-  };
 
   const langSuffix = language === "ru" ? "?lang=ru" : "";
 
@@ -104,26 +96,6 @@ export default function Dashboard({ selectedPlan, onChangePlan, language, onTogg
                 e.currentTarget.src = "/favicon/favicon.svg";
               }}
             />
-            <div
-              className="flex items-center bg-white/10 rounded-full p-0.5 cursor-pointer"
-              onClick={handleToggleUnit}
-              data-testid="button-toggle-unit"
-            >
-              <span
-                className={`text-xs font-medium px-2 py-1 rounded-full transition-colors ${
-                  distanceUnit === "km" ? "bg-[#FFE100] text-black" : "text-white/70"
-                }`}
-              >
-                km
-              </span>
-              <span
-                className={`text-xs font-medium px-2 py-1 rounded-full transition-colors ${
-                  distanceUnit === "miles" ? "bg-[#FFE100] text-black" : "text-white/70"
-                }`}
-              >
-                mi
-              </span>
-            </div>
             <div
               className="flex items-center bg-white/10 rounded-full p-0.5 cursor-pointer"
               onClick={onToggleLanguage}
@@ -239,7 +211,6 @@ export default function Dashboard({ selectedPlan, onChangePlan, language, onTogg
                 weeks={plan.weeks}
                 completedWorkouts={completedWorkouts}
                 onToggleWorkout={handleToggleWorkout}
-                distanceUnit={distanceUnit}
                 language={language}
               />
             ) : (
